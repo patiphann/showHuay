@@ -8,6 +8,7 @@
  */
 
 import React, { PropTypes } from 'react';
+import firebase from 'firebase';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.css';
 
@@ -15,6 +16,44 @@ class Login extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+      password: ''
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    const state = {
+      [event.target.name]: event.target.value
+    };
+    this.setState(state);
+  }
+
+  handleSubmit = (event) => {
+    const {
+      email,
+      password
+    } = this.state;
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then((res) => {
+        console.log('sign then: ', res);
+      })
+      .catch((error) => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+
+        console.log('sign catch: ', error);
+      });
+
+    event.preventDefault();
+  }
 
   render() {
     return (
@@ -84,17 +123,19 @@ class Login extends React.Component {
             </a>
           </div>
           <strong className={s.lineThrough}>OR</strong>
-          <form method="post">
+          <form type="post" onSubmit={this.handleSubmit}>
             <div className={s.formGroup}>
               <label className={s.label} htmlFor="usernameOrEmail">
                 Username or email address:
               </label>
               <input
                 className={s.input}
-                id="usernameOrEmail"
+                id="email"
                 type="text"
-                name="usernameOrEmail"
+                name="email"
                 autoFocus
+                value={this.state.email}
+                onChange={this.handleChange}
               />
             </div>
             <div className={s.formGroup}>
@@ -106,6 +147,8 @@ class Login extends React.Component {
                 id="password"
                 type="password"
                 name="password"
+                value={this.state.password}
+                onChange={this.handleChange}
               />
             </div>
             <div className={s.formGroup}>

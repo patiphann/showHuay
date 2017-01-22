@@ -93,6 +93,30 @@ textarea {
   resize: vertical;
 }
 
+.connected {
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  background-color: var(--green);
+  color: var(--white);
+  text-align: center;
+}
+
+.disConnected {
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  background-color: var(--red);
+  color: var(--white);
+  text-align: center;
+}
+
 /*
  * Browser upgrade prompt
  * ========================================================================== */

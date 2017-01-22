@@ -44,7 +44,7 @@ class App extends React.PureComponent {
     children: PropTypes.element.isRequired,
   };
 
-  static childContextTypes = ContextType;
+  static childContextTypes = ContextType
 
   getChildContext() {
     return this.props.context;
