@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import authFirebase from '../../core/firebase/auth';
 import Layout from '../../components/Layout';
 import Login from './Login';
 
@@ -17,10 +18,15 @@ export default {
 
   path: '/login',
 
-  action() {
+  async signIn(email:String, password:String) {
+    // sign in
+    return await authFirebase.signIn(email, password);
+  },
+
+  async action() {
     return {
       title,
-      component: <Layout><Login title={title} /></Layout>,
+      component: <Layout><Login title={title} signIn={this.signIn} /></Layout>,
     };
   },
 

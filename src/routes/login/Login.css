@@ -155,3 +155,7 @@
   border-bottom: 1px solid #ddd;
   content: '';
 }
+
+.error {
+  color: var(--red);
+}

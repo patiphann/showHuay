@@ -8,8 +8,9 @@
  */
 
 import React, { PropTypes } from 'react';
-import firebase from 'firebase';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import initFirebase from '../../core/firebase/initialize';
+import authFirebase from '../../core/firebase/auth';
 import s from './Layout.css';
 import Header from '../Header';
 import Feedback from '../Feedback';
@@ -24,72 +25,67 @@ class Layout extends React.Component {
     super(props);
     this.state = {
       connected: false,
-      showConnected: false
+      showConnected: false,
     };
 
-    this._renderConnectedFirebase = this._renderConnectedFirebase.bind(this);
+    this.renderConnectedFirebase = this.renderConnectedFirebase.bind(this);
   }
 
   componentDidMount() {
-    this._initializeFirebase();
+    this.initializeFirebase();
   }
 
-  _initializeFirebase() {
-    const config = {
-      apiKey: "AIzaSyBMZ3vyqorK0kT_4xzAR2HoEfRCGkCIBq4",
-      authDomain: "showhuay-5f1bc.firebaseapp.com",
-      databaseURL: "https://showhuay-5f1bc.firebaseio.com",
-      storageBucket: "showhuay-5f1bc.appspot.com",
-      messagingSenderId: "175936341076"
-    };
-    const app = firebase.initializeApp(config);
-
-    this._connectedFirebase()
+  componentWillUnmount() {
+    authFirebase.authChangeRef();
   }
 
-  _connectedFirebase() {
-    var connectedRef = firebase.database().ref(".info/connected");
-    connectedRef.on("value", (snap) => {
-      if (snap.val() === true) {
+  initializeFirebase() {
+    // Initialize firebase
+    initFirebase.initialize();
+
+    // check connect
+    initFirebase.connectedFirebase((resp) => {
+      if (resp === true) {
+        // check auth
+        authFirebase.onAuthStateChanged();
+
         this.setState({
           connected: true,
-          showConnected: true
+          showConnected: true,
         });
 
         setTimeout(() => {
           this.setState({
-            showConnected: false
+            showConnected: false,
           });
         }, 2000);
       } else {
         this.setState({
           connected: false,
-          showConnected: true
-        })
+          showConnected: true,
+        });
       }
     });
   }
 
-  _renderConnectedFirebase() {
-    const { connected, showConnected } = this.state
+  renderConnectedFirebase() {
+    const { connected, showConnected } = this.state;
 
-    if(showConnected) {
-      if(connected) {
-        return (
+    return (
+      (showConnected) ?
+        (connected) ?
           <div className={s.connected}>Connect Database!</div>
-        )
-      } else {
-        return (
+        :
           <div className={s.disConnected}>Disconnect Database!</div>
-        )
-      }
-    }
+      :
+        null
+    );
   }
 
   render() {
     return (
       <div>
-        {this._renderConnectedFirebase()}
+        {this.renderConnectedFirebase()}
         <Header />
         {this.props.children}
         <Feedback />
